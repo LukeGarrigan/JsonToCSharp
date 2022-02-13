@@ -10,20 +10,20 @@ namespace ConsoleApp1
         private IEnumerable<object> tokens;
         private string? nextClassName;
         public string Output { get; set; }
+        
+        public IList<string> Classes { get; set; } = new List<string>();
 
 
         public Parser(IEnumerable<object> tokens)
         {
             this.tokens = tokens;
             var result = Parse(true);
-            Output = result;
+            
         }
 
         private string Parse(bool root = false)
         {
             var currentToken = tokens.First();
-
-            var output = "";
 
             if (root && !currentToken.Equals('{'))
             {
@@ -33,8 +33,7 @@ namespace ConsoleApp1
             if (currentToken.Equals('{'))
             {
                 tokens = tokens.Skip(1);
-                
-                output += ParseObject();
+                ParseObject();
             }
             else
             {
@@ -43,10 +42,10 @@ namespace ConsoleApp1
                 return currentToken.ToString();
             }
 
-            return output += "}";
+            return Output += "}";
         }
 
-        private string ParseObject()
+        private void ParseObject()
         {
             var output = $"public class {nextClassName ?? "Root"} {{ ";
             
@@ -54,7 +53,8 @@ namespace ConsoleApp1
 
             if (currentToken == "}")
             {
-                return output + "}";
+                Output += output + "}";
+                return;
             }
 
             while (true)
@@ -72,8 +72,10 @@ namespace ConsoleApp1
                     tokens = tokens.Skip(1);
                     break;
                 }
+                tokens = tokens.Skip(1); // skips ,
             }
-            return output;
+
+            Output += output;
         }
     }
 }

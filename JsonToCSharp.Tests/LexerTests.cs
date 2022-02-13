@@ -66,5 +66,16 @@ namespace JsonToCsharp.Tests
             lexer.Tokens.ElementAt(3).Should().Be(5);
             lexer.Tokens.ElementAt(4).Should().Be('}');
         }
+        
+        [Test]
+        public void Should_Lex_Nested_Object()
+        {
+            var input = "{\"name\":\"Luke\",\"address\":{\"street\":\"123 Main St\",\"city\":\"Anywhere\",\"state\":\"CA\"}}";
+
+            var lexer = new Lexer(input);
+
+            lexer.Tokens.Count().Should().Be(21);
+        }
+
     }
 }
