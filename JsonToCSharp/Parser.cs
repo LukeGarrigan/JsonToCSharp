@@ -62,10 +62,15 @@ namespace ConsoleApp1
                 var jsonKey = tokens.First();
                 this.nextClassName = jsonKey.ToString();
                 tokens = tokens.Skip(2); // also skip colon
-                
-                
+
+                var type = "string";
+                if (tokens.First() is int)
+                {
+                    type = "int";
+                }
+
                 var jsonValue = Parse();
-                output += $"public string {jsonKey} {{ get; set; }}";
+                output += $"public {type} {jsonKey} {{ get; set; }}";
                 
                 if (tokens.First().Equals('}'))
                 {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using ConsoleApp1;
 using FluentAssertions;
 using NUnit.Framework;
@@ -33,7 +34,7 @@ namespace JsonToCsharp.Tests
             var lexer = new Lexer(input);
 
             var parser = new Parser(lexer.Tokens);
-            parser.Output.Should().Be("public class Root { public string name { get; set; }}");
+            AssertIgnoreSpaces(parser.Output,"public class Root { public string name { get; set; }}");
         }
         
         [Test]
@@ -44,7 +45,18 @@ namespace JsonToCsharp.Tests
             var lexer = new Lexer(input);
 
             var parser = new Parser(lexer.Tokens);
-            parser.Output.Should().Be("public class Root { public string name { get; set; }public string lastName { get; set; }}");
+            AssertIgnoreSpaces(parser.Output,"public class Root { public string name { get; set; }public string lastName { get; set; }}");
+        }
+        
+        [Test]
+        public void Should_Parse_Number()
+        {
+            var input = "{\"age\":400}";
+
+            var lexer = new Lexer(input);
+
+            var parser = new Parser(lexer.Tokens);
+            AssertIgnoreSpaces(parser.Output,"public class Root { public int age { get; set; }}");
         }
         
         [Test]
@@ -55,7 +67,7 @@ namespace JsonToCsharp.Tests
             var lexer = new Lexer(input);
 
             var parser = new Parser(lexer.Tokens);
-            parser.Output.Should().Be("public class Root { public string name { get; set; }public string lastName { get; set; }public string nickName { get; set; }}");
+            AssertIgnoreSpaces(parser.Output,"public class Root { public string name { get; set; }public string lastName { get; set; }public string nickName { get; set; }}" );
         }
 
         [Test]
@@ -67,8 +79,58 @@ namespace JsonToCsharp.Tests
 
             var parser = new Parser(lexer.Tokens);
             
-            parser.Output.Should().Be("public class address { public string street { get; set; }public string city { get; set; }public string state { get; set; }}public class Root { public string name { get; set; }public string address { get; set; }}");
+            AssertIgnoreSpaces(parser.Output, "public class address {  public string street { get; set; }public string city { get; set; }public string state { get; set; }}public class Root { public string name { get; set; }public string address { get; set; }}");
         }
 
+        [Test]
+        public void Should_Parse_Object_That_is_Followed_By_Attributes()
+        {
+            var input = "{\"name\":\"Luke\",\"address\":{\"postcode\":\"pe321da\"},\"favColor\":\"blue\"}";
+
+            var lexer = new Lexer(input);
+
+            var parser = new Parser(lexer.Tokens);
+            
+            AssertIgnoreSpaces(parser.Output, "  public class address{ public string postcode {get; set;}}  public class Root {  public string name { get; set; }  public string address { get; set; }  public string favColor { get; set; }}");
+        }
+
+
+        private void AssertIgnoreSpaces(string parserOutput, string s)
+        {
+            RemoveAllWhitespace(parserOutput).Should().Be(RemoveAllWhitespace(s));
+        }
+        
+        private static string RemoveAllWhitespace(string json)
+        {
+            var output = "";
+            for (var i = 0; i < json.Length; i++)
+            {
+                var currentCharacter = json[i];
+                if (currentCharacter == '"')
+                {
+                    var stringEnd = false;
+                    output += currentCharacter;
+                    var j = i + 1;
+                    while (!stringEnd)
+                    {
+                        output += json[j];
+                        if (json[j] == '"')
+                        {
+                            stringEnd = true;
+                        }
+                        j++;
+                    }
+                    i = j-1;
+                    continue;
+                }
+
+                if (currentCharacter != ' ')
+                {
+                    output += currentCharacter;
+                }
+            }
+
+            return output;
+        }
     }
 }
