@@ -28,9 +28,8 @@ namespace ConsoleApp1
             json = RemoveAllWhitespace(json);
 
 
-            var lex  = new Lexer(json);
+            var result  = new Lexer(json);
 
-            var result = lex.Lex();
             
             // we have an object here
             //var result = ConvertObjectToCSharp(json, "Root");

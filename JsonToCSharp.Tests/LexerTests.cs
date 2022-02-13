@@ -13,33 +13,58 @@ namespace JsonToCsharp.Tests
         {
             var input = "{\"name\":\"Luke\"}";
 
-            var lex = new Lexer(input);
-            
-            var lexResult = lex.Lex();
-            lexResult.Count().Should().Be(5);
+            var lexer = new Lexer(input);
 
-            lexResult.ElementAt(0).Should().Be('{');
-            lexResult.ElementAt(1).Should().Be("name");
-            lexResult.ElementAt(2).Should().Be(':');
-            lexResult.ElementAt(3).Should().Be("Luke");
-            lexResult.ElementAt(4).Should().Be('}');
+            lexer.Tokens.Count().Should().Be(5);
+            lexer.Tokens.ElementAt(0).Should().Be('{');
+            lexer.Tokens.ElementAt(1).Should().Be("name");
+            lexer.Tokens.ElementAt(2).Should().Be(':');
+            lexer.Tokens.ElementAt(3).Should().Be("Luke");
+            lexer.Tokens.ElementAt(4).Should().Be('}');
+        }
+        
+        [Test]
+        public void Should_Return_Multiple_String_Tokens()
+        {
+            var input = "{\"name\":\"Luke\",\"nickName\":\"whoop\"}";
+
+            var lexer = new Lexer(input);
+
+            lexer.Tokens.Count().Should().Be(9);
+        }
+        
+                
+        [Test]
+        public void Should_Return_String_And_Int()
+        {
+            var input = "{\"name\":\"Luke\",\"nickName\":\"whoop\",\"age\":25}";
+
+            var lexer = new Lexer(input);
+
+            lexer.Tokens.Count().Should().Be(13);
+        }
+        
+        [Test]
+        public void Should_Return_Int_Then_String()
+        {
+            var input = "{\"name\":\"Luke\",\"age\":25,\"nickName\":\"whoop\"}";
+
+            var lexer = new Lexer(input);
+
+            lexer.Tokens.Count().Should().Be(13);
         }
 
         [Test]
         public void Should_Return_Number_Token()
         {
             var input = "{\"age\":5}";
-            
-            var lex = new Lexer(input);
-            var lexResults = lex.Lex();
-
-            lexResults.Count().Should().Be(5);
-            lexResults.ElementAt(0).Should().Be('{');
-            lexResults.ElementAt(1).Should().Be("age");
-            lexResults.ElementAt(2).Should().Be(':');
-            lexResults.ElementAt(3).Should().Be(5);
-            lexResults.ElementAt(4).Should().Be('}');
+            var lexer = new Lexer(input);
+            lexer.Tokens.Count().Should().Be(5);
+            lexer.Tokens.ElementAt(0).Should().Be('{');
+            lexer.Tokens.ElementAt(1).Should().Be("age");
+            lexer.Tokens.ElementAt(2).Should().Be(':');
+            lexer.Tokens.ElementAt(3).Should().Be(5);
+            lexer.Tokens.ElementAt(4).Should().Be('}');
         }
-
     }
 }

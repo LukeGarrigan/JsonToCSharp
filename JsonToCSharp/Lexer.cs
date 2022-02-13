@@ -1,58 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace ConsoleApp1
 {
 
     public class Lexer
     {
-        
-        private readonly string input;
+        private readonly  char[] jsonSynax = {'{', '}', '[', ']', ':', ','};
+        public IEnumerable<object> Tokens { get; set; }
 
-        private readonly char[] jsonSynax = {'{', '}', '[', ']', ':', ','};
-        
-        
-        public Lexer(string input)
+        public Lexer(string json)
         {
-            this.input = input;
+            Lex(json);
         }
 
-        public IEnumerable<object> Lex()
+        private void Lex(string input)
         {
             var output = new List<object>();
-
-            var currentInput = input;
-
-            while (currentInput.Any())
+            while (input.Any())
             {
-                var stringResult  = LexString(currentInput);
+                var stringResult  = LexString(input);
                 if (stringResult != "")
                 {
-                    currentInput = currentInput.Substring(stringResult.Length + 2);
+                    input = input.Substring(stringResult.Length + 2);
                     output.Add(stringResult);
                     continue;
                 }
 
-                var numberResult = LexNumber(currentInput);
+                var numberResult = LexNumber(input);
 
                 if (numberResult != "")
                 {
-                    currentInput = currentInput.Substring(numberResult.Length);
+                    input = input.Substring(numberResult.Length);
                     output.Add(int.Parse(numberResult));
                     continue;
                 }
 
-                if (jsonSynax.Any(e => e == currentInput[0]))
+                if (jsonSynax.Any(e => e == input[0]))
                 {
-                    output.Add(currentInput[0]);
-                    currentInput = currentInput.Substring(1);
+                    output.Add(input[0]);
+                    input = input.Substring(1);
                 }
             }
-            return output;
+            Tokens = output;
         }
 
-        private string LexNumber(string currentInput)
+        private static string LexNumber(string currentInput)
         {
             var numbers = new List<char>() { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
@@ -74,7 +69,7 @@ namespace ConsoleApp1
             return "";
         }
 
-        private string LexString(string currentInput)
+        private static string LexString(string currentInput)
         {
 
             var output = "";
