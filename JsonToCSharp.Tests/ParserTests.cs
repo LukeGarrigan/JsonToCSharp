@@ -79,7 +79,7 @@ namespace JsonToCsharp.Tests
 
             var parser = new Parser(lexer.Tokens);
             
-            AssertIgnoreSpaces(parser.Output, "public class address {  public string street { get; set; }public string city { get; set; }public string state { get; set; }}public class Root { public string name { get; set; }public string address { get; set; }}");
+            AssertIgnoreSpaces(parser.Output, "public class Address {  public string street { get; set; }public string city { get; set; }public string state { get; set; }}public class Root { public string name { get; set; }public Address address { get; set; }}");
         }
 
         [Test]
@@ -91,7 +91,7 @@ namespace JsonToCsharp.Tests
 
             var parser = new Parser(lexer.Tokens);
             
-            AssertIgnoreSpaces(parser.Output, "  public class address{ public string postcode {get; set;}}  public class Root {  public string name { get; set; }  public string address { get; set; }  public string favColor { get; set; }}");
+            AssertIgnoreSpaces(parser.Output, "  public class Address{ public string postcode {get; set;}}  public class Root {  public string name { get; set; }  public Address address { get; set; }  public string favColor { get; set; }}");
         }
 
 

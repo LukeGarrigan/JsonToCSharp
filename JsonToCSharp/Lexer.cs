@@ -37,6 +37,20 @@ namespace ConsoleApp1
                     output.Add(int.Parse(numberResult));
                     continue;
                 }
+                
+                if (input.Length > 4 && input.Substring(0, 4) == "true")
+                {
+                    input = input.Substring(4);
+                    output.Add(true);
+                    continue;
+                }
+                
+                if (input.Length > 5 && input.Substring(0, 5) == "false")
+                {
+                    input = input.Substring(5);
+                    output.Add(false);
+                    continue;
+                }
 
                 if (jsonSynax.Any(e => e == input[0]))
                 {
@@ -68,6 +82,7 @@ namespace ConsoleApp1
 
             return "";
         }
+        
 
         private static string LexString(string currentInput)
         {
@@ -93,7 +108,6 @@ namespace ConsoleApp1
             }
 
             return currentInput;
-
         }
     }
 }

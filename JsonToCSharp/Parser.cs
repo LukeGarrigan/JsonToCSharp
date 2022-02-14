@@ -17,7 +17,7 @@ namespace ConsoleApp1
         public Parser(IEnumerable<object> tokens)
         {
             this.tokens = tokens;
-            var result = Parse(true);
+            Parse(true);
             
         }
 
@@ -47,6 +47,7 @@ namespace ConsoleApp1
 
         private void ParseObject()
         {
+            // capitalise first letter of nextClassName
             var output = $"public class {nextClassName ?? "Root"} {{ ";
             
             var currentToken = tokens.First();
@@ -60,16 +61,19 @@ namespace ConsoleApp1
             while (true)
             {
                 var jsonKey = tokens.First();
-                this.nextClassName = jsonKey.ToString();
+                this.nextClassName = CapitaliseFirstLetter(jsonKey);
                 tokens = tokens.Skip(2); // also skip colon
 
                 var type = "string";
                 if (tokens.First() is int)
                 {
                     type = "int";
+                } else if (tokens.First().Equals('{'))
+                {
+                    type = nextClassName;
                 }
 
-                var jsonValue = Parse();
+                Parse();
                 output += $"public {type} {jsonKey} {{ get; set; }}";
                 
                 if (tokens.First().Equals('}'))
@@ -81,6 +85,11 @@ namespace ConsoleApp1
             }
 
             Output += output;
+        }
+
+        private static string CapitaliseFirstLetter(object jsonKey)
+        {
+            return jsonKey.ToString().First().ToString().ToUpper() + jsonKey.ToString().Substring(1);
         }
     }
 }
