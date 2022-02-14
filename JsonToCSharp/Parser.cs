@@ -10,9 +10,6 @@ namespace ConsoleApp1
         private IEnumerable<object> tokens;
         private string? nextClassName;
         public string Output { get; set; }
-        
-        public IList<string> Classes { get; set; } = new List<string>();
-
 
         public Parser(IEnumerable<object> tokens)
         {
@@ -64,15 +61,7 @@ namespace ConsoleApp1
                 this.nextClassName = CapitaliseFirstLetter(jsonKey);
                 tokens = tokens.Skip(2); // also skip colon
 
-                var type = "string";
-                if (tokens.First() is int)
-                {
-                    type = "int";
-                } else if (tokens.First().Equals('{'))
-                {
-                    type = nextClassName;
-                }
-
+                var type = GetType();
                 Parse();
                 output += $"public {type} {jsonKey} {{ get; set; }}";
                 
@@ -85,6 +74,25 @@ namespace ConsoleApp1
             }
 
             Output += output;
+        }
+
+        private string GetType()
+        {
+            var type = "string";
+            if (tokens.First() is int)
+            {
+                type = "int";
+            }
+            else if (tokens.First() is bool)
+            {
+                type = "bool";
+            }
+            else if (tokens.First().Equals('{'))
+            {
+                type = nextClassName;
+            }
+
+            return type;
         }
 
         private static string CapitaliseFirstLetter(object jsonKey)

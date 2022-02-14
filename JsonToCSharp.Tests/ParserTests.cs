@@ -60,6 +60,17 @@ namespace JsonToCsharp.Tests
         }
         
         [Test]
+        public void Should_Parse_Boolean()
+        {
+            var input = "{\"happy\":true}";
+
+            var lexer = new Lexer(input);
+
+            var parser = new Parser(lexer.Tokens);
+            AssertIgnoreSpaces(parser.Output,"public class Root { public bool happy { get; set; }}");
+        }
+        
+        [Test]
         public void Should_Return_Multiple_Props()
         {
             var input = "{\"name\":\"Luke\",\"lastName\":\"Garrigan\",\"nickName\":\"whoop\"}";
