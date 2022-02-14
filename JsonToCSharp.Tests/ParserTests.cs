@@ -103,6 +103,19 @@ namespace JsonToCsharp.Tests
             
             AssertIgnoreSpaces(parser.Output, "public class Address {  public string street { get; set; }public string city { get; set; }public string state { get; set; }}public class Root { public string name { get; set; }public Address address { get; set; }}");
         }
+        
+        [Test]
+        public void Should_Parse_Double_Nested_Object()
+        {
+            var input = "{\"Person\":{\"Name\":{\"FirstName\":\"Luke\"}}}";
+
+            var lexer = new Lexer(input);
+
+            var parser = new Parser(lexer.Tokens);
+            
+            AssertIgnoreSpaces(parser.Output, "public class Name { public string FirstName { get; set; }}public class Person { public Name Name { get; set; }}public class Root { public Person Person { get; set; }}");
+        }
+        
 
         [Test]
         public void Should_Parse_Object_That_is_Followed_By_Attributes()

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Linq;
 
 namespace ConsoleApp1
 {
@@ -15,10 +14,9 @@ namespace ConsoleApp1
         {
             this.tokens = tokens;
             Parse(true);
-            
         }
 
-        private string Parse(bool root = false)
+        private void Parse(bool root = false)
         {
             var currentToken = tokens.First();
 
@@ -32,14 +30,32 @@ namespace ConsoleApp1
                 tokens = tokens.Skip(1);
                 ParseObject();
             }
+            else if (currentToken != null && currentToken.Equals('['))
+            {
+                tokens = tokens.Skip(1);
+                ParseArray();
+            }
             else
             {
 
                 tokens = tokens.Skip(1);
-                return currentToken == null ? null : currentToken.ToString();
+                return;
             }
 
-            return Output += "}";
+            Output += "}";
+        }
+
+        private void ParseArray()
+        {       
+            var currentToken = tokens.First();
+            if (currentToken == "]")
+            {
+                Output += "]";
+                tokens = tokens.Skip(1);
+                return;
+            }
+
+
         }
 
         private void ParseObject()
@@ -47,14 +63,6 @@ namespace ConsoleApp1
             // capitalise first letter of nextClassName
             var output = $"public class {nextClassName ?? "Root"} {{ ";
             
-            var currentToken = tokens.First();
-
-            if (currentToken == "}")
-            {
-                Output += output + "}";
-                return;
-            }
-
             while (true)
             {
                 var jsonKey = tokens.First();
