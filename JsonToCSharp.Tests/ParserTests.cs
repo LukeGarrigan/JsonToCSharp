@@ -71,6 +71,17 @@ namespace JsonToCsharp.Tests
         }
         
         [Test]
+        public void Should_Parse_Null()
+        {
+            var input = "{\"happy\":null}";
+
+            var lexer = new Lexer(input);
+
+            var parser = new Parser(lexer.Tokens);
+            AssertIgnoreSpaces(parser.Output,"public class Root { public object happy { get; set; }}");
+        }
+        
+        [Test]
         public void Should_Return_Multiple_Props()
         {
             var input = "{\"name\":\"Luke\",\"lastName\":\"Garrigan\",\"nickName\":\"whoop\"}";

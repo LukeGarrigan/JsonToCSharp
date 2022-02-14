@@ -92,6 +92,20 @@ namespace JsonToCsharp.Tests
             lexer.Tokens.ElementAt(3).Should().Be(false);
             lexer.Tokens.ElementAt(4).Should().Be('}');
         }
+        
+                
+        [Test]
+        public void Should_Parse_Null()
+        {
+            var input = "{\"happy\":null}";
+            var lexer = new Lexer(input);
+            lexer.Tokens.Count().Should().Be(5);
+            lexer.Tokens.ElementAt(0).Should().Be('{');
+            lexer.Tokens.ElementAt(1).Should().Be("happy");
+            lexer.Tokens.ElementAt(2).Should().Be(':');
+            lexer.Tokens.ElementAt(3).Should().Be(null);
+            lexer.Tokens.ElementAt(4).Should().Be('}');
+        }
 
         [Test]
         public void Should_Lex_Nested_Object()

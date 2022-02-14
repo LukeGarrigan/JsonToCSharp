@@ -27,7 +27,7 @@ namespace ConsoleApp1
                 throw new Exception("Root must be an object");
             }
 
-            if (currentToken.Equals('{'))
+            if (currentToken != null && currentToken.Equals('{'))
             {
                 tokens = tokens.Skip(1);
                 ParseObject();
@@ -36,7 +36,7 @@ namespace ConsoleApp1
             {
 
                 tokens = tokens.Skip(1);
-                return currentToken.ToString();
+                return currentToken == null ? null : currentToken.ToString();
             }
 
             return Output += "}";
@@ -86,6 +86,10 @@ namespace ConsoleApp1
             else if (tokens.First() is bool)
             {
                 type = "bool";
+            }
+            else if (tokens.First() is null)
+            {
+                type = "object";
             }
             else if (tokens.First().Equals('{'))
             {

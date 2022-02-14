@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace ConsoleApp1
 {
@@ -49,6 +47,13 @@ namespace ConsoleApp1
                 {
                     input = input.Substring(5);
                     output.Add(false);
+                    continue;
+                }
+                
+                if (input.Length > 4 && input.Substring(0, 4) == "null")
+                {
+                    input = input.Substring(4);
+                    output.Add(null);
                     continue;
                 }
 
