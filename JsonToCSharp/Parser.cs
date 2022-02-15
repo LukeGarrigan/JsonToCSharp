@@ -42,20 +42,33 @@ namespace ConsoleApp1
                 return;
             }
 
-            Output += "}";
+            if (Output != null)
+            {
+                Output += "}";
+            }
         }
 
         private void ParseArray()
         {       
-            var currentToken = tokens.First();
-            if (currentToken == "]")
+            var initialToken = tokens.First();
+            if (initialToken != null && initialToken.Equals(']'))
             {
-                Output += "]";
                 tokens = tokens.Skip(1);
                 return;
             }
 
+            while (true)
+            {
+                var value = tokens.First();
+                tokens = tokens.Skip(1);
 
+                var currentToken = tokens.First();
+                if (currentToken != null && currentToken.Equals(']'))
+                {
+                    tokens = tokens.Skip(1);
+                    return;
+                }
+            }
         }
 
         private void ParseObject()
@@ -63,9 +76,17 @@ namespace ConsoleApp1
             // capitalise first letter of nextClassName
             var output = $"public class {nextClassName ?? "Root"} {{ ";
             
+            var firstChar = tokens.First();
+            if (firstChar.Equals('}'))
+            {
+                tokens = tokens.Skip(1);
+                return;
+            }
             while (true)
             {
                 var jsonKey = tokens.First();
+                
+
                 this.nextClassName = CapitaliseFirstLetter(jsonKey);
                 tokens = tokens.Skip(2); // also skip colon
 
@@ -102,6 +123,25 @@ namespace ConsoleApp1
             else if (tokens.First().Equals('{'))
             {
                 type = nextClassName;
+            }
+            else if (tokens.First().Equals('['))
+            {
+                var secondElement = tokens.ToList().ElementAt(1);
+                if (secondElement is null || secondElement.Equals(']') || secondElement.Equals('{'))
+                {
+                    type = "List<object>";
+                } else if (secondElement is int)
+                {
+                    type = "List<int>";
+                }
+                else if (secondElement is bool)
+                {
+                    type = "List<bool>";
+                }
+                else if (secondElement is string)
+                {
+                    type = "List<string>";
+                }
             }
 
             return type;

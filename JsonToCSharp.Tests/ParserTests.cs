@@ -128,7 +128,85 @@ namespace JsonToCsharp.Tests
             
             AssertIgnoreSpaces(parser.Output, "  public class Address{ public string postcode {get; set;}}  public class Root {  public string name { get; set; }  public Address address { get; set; }  public string favColor { get; set; }}");
         }
+        
+        
+        [Test]
+        public void Should_Parse_Empty_Object()
+        {
+            var input = "{\"address\":{}}";
 
+            var lexer = new Lexer(input);
+
+            var parser =  new Parser(lexer.Tokens);
+
+            AssertIgnoreSpaces(parser.Output, "public class Root { public Address address { get; set; }}");
+        }
+
+        [Test]
+        public void Should_Parse_Empty_Array()
+        {
+            var input = "{\"address\":[]}";
+
+            var lexer = new Lexer(input);
+
+            var parser = new Parser(lexer.Tokens);
+            AssertIgnoreSpaces(parser.Output, "public class Root { public List<object> address { get; set; }}");
+        }
+
+        [Test]
+        public void Should_Parse_Array_Of_Ints()
+        {
+            var input = "{\"numbers\":[1,2,3]}";
+            
+            var lexer = new Lexer(input);
+
+            var parser = new Parser(lexer.Tokens);
+            AssertIgnoreSpaces(parser.Output, "public class Root { public List<int> numbers { get; set; }}");
+        }
+
+        [Test]
+        public void Should_Parse_Array_Then_Property()
+        {
+            var input = "{\"numbers\":[1,2,3],\"age\":27}";
+            
+            var lexer = new Lexer(input);
+
+            var parser = new Parser(lexer.Tokens);
+            AssertIgnoreSpaces(parser.Output, "public class Root { public List<int> numbers { get; set; } public int age { get; set; }}");
+        }
+
+        [Test]
+        public void Should_Parse_String_Array()
+        {
+            var input = "{\"names\":[\"Luke\",\"Garrigan\"]}";
+            
+            var lexer = new Lexer(input);
+
+            var parser = new Parser(lexer.Tokens);
+            AssertIgnoreSpaces(parser.Output, "public class Root { public List<string> names { get; set; }}");
+        }
+        
+        [Test]
+        public void Should_Parse_Boolean_Array()
+        {
+            var input = "{\"answers\":[true,false,true]}";
+            
+            var lexer = new Lexer(input);
+
+            var parser = new Parser(lexer.Tokens);
+            AssertIgnoreSpaces(parser.Output, "public class Root { public List<bool> answers { get; set; }}");
+        }
+
+        [Test]
+        public void Should_Parse_Array_Of_Objects_If_Array_Values_Are_Null()
+        {
+            var input = "{\"nullers\":[null,null]}";
+            
+            var lexer = new Lexer(input);
+
+            var parser = new Parser(lexer.Tokens);
+            AssertIgnoreSpaces(parser.Output, "public class Root { public List<object> nullers { get; set; }}");
+        }
 
         private void AssertIgnoreSpaces(string parserOutput, string s)
         {
