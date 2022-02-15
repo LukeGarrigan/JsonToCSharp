@@ -143,7 +143,6 @@ namespace ConsoleApp1
                     type = "List<string>";
                 }
             }
-
             return type;
         }
 

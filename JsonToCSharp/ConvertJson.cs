@@ -12,9 +12,6 @@ namespace ConsoleApp1
     public static class ConvertJson
     {
         
-        // "{"name": "Luke", "lastName": Skywalker"}"
-        // "{"address": {"street": "123 Main St", "city": "Anytown", "state": "CA"}}"
-        
         public static string ToCSharp(string json)
         {
             json = json.Trim();
@@ -30,11 +27,9 @@ namespace ConsoleApp1
 
             var result  = new Lexer(json);
 
-            
-            // we have an object here
-            //var result = ConvertObjectToCSharp(json, "Root");
-            
-            return result.ToString();
+            var parser = new Parser(result.Tokens);
+
+            return parser.Output;
         }
 
         private static string RemoveAllWhitespace(string json)
@@ -69,35 +64,6 @@ namespace ConsoleApp1
 
             return output;
         }
-
-        private static string ConvertObjectToCSharp(string json, string className)
-        {
-            var output = $"public class {className} {{";
-            var attributes = json.Split(",");
-            
-            for (var i = 0; i < attributes.Length; i++)
-            {
-                var attribute = attributes[i];
-                var keyValue = attribute.Split(":");
-                var key = keyValue[0].Trim();
-                var value = keyValue[1].Trim();
-                var dataType = GetDataType(value);
-                output += $" public {dataType} {key.Substring(1, key.Length-2)} {{ get; set; }}";
-            }
-
-            return output + "}";
-        }
-
-        private static string GetDataType(string value)
-        {
-
-            if (int.TryParse(value, out int result))
-            {
-                return "int";
-            }
-
-            return "string";
-        }
-
+        
     }
 }

@@ -116,6 +116,5 @@ namespace JsonToCsharp.Tests
 
             lexer.Tokens.Count().Should().Be(21);
         }
-
     }
 }

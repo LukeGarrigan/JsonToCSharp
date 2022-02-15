@@ -12,16 +12,6 @@ namespace JsonToCsharp.Tests
         [SetUp]
         public void Setup()
         {
-            
-            
-        }
-
-        [Test]
-        public void ShouldThrowIfJsonDoesNotStartAndEndWithBrackets()
-        {
-            var input = "{}a";
-
-            Assert.Throws<Exception>(() => ConvertJson.ToCSharp(input));
         }
 
 
@@ -44,7 +34,6 @@ namespace JsonToCsharp.Tests
             
             result.Should().Be("public class Root { public string name { get; set; } public string lastName { get; set; }}");
         }   
-        
         
         [Test]
         public void ShouldCreateAnIntegerAttribute()
