@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ConsoleApp1
@@ -19,45 +20,27 @@ namespace ConsoleApp1
             var output = new List<object>();
             while (input.Any())
             {
-                var stringResult  = LexString(input);
-                if (stringResult != "")
+                if (LexString(input, out var stringOutput))
                 {
-                    input = input.Substring(stringResult.Length + 2);
-                    output.Add(stringResult);
-                    continue;
-                }
-
-                var numberResult = LexNumber(input);
-
-                if (numberResult != "")
+                    input = input.Substring(stringOutput.Length + 2);
+                    output.Add(stringOutput);
+                } else if (LexNumber(input, out var numberResult))
                 {
                     input = input.Substring(numberResult.Length);
                     output.Add(int.Parse(numberResult));
-                    continue;
-                }
-                
-                if (input.Length > 4 && input.Substring(0, 4) == "true")
+                } else if (input.Length > 4 && input.Substring(0, 4) == "true")
                 {
                     input = input.Substring(4);
                     output.Add(true);
-                    continue;
-                }
-                
-                if (input.Length > 5 && input.Substring(0, 5) == "false")
+                } else if (input.Length > 5 && input.Substring(0, 5) == "false")
                 {
                     input = input.Substring(5);
                     output.Add(false);
-                    continue;
-                }
-                
-                if (input.Length > 4 && input.Substring(0, 4) == "null")
+                } else if (input.Length > 4 && input.Substring(0, 4) == "null")
                 {
                     input = input.Substring(4);
                     output.Add(null);
-                    continue;
-                }
-
-                if (jsonSynax.Any(e => e == input[0]))
+                } else if (jsonSynax.Any(e => e == input[0])) 
                 {
                     output.Add(input[0]);
                     input = input.Substring(1);
@@ -66,53 +49,54 @@ namespace ConsoleApp1
             Tokens = output;
         }
 
-        private static string LexNumber(string currentInput)
+        private static bool LexNumber(string currentInput, out string output)
         {
             var numbers = new List<char>() { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-
-            var number = "";
+            output = "";
 
             foreach (var character in currentInput)
             {
                 if (numbers.Any(n => n == character))
                 {
 
-                    number += character;
+                    output += character;
                 }
                 else
                 {
-                    return number;
+                    if (output.Length > 0)
+                    {
+                        return true;
+                    }
+                    return false;
                 }
             }
-
-            return "";
+            return false;
         }
         
 
-        private static string LexString(string currentInput)
+        private static bool LexString(string currentInput, out string result)
         {
-
-            var output = "";
+            result = "";
             if (currentInput[0] == '"')
             {
                 currentInput = currentInput.Substring(1);
             }
             else
             {
-                return "";
+                return false;
             }
             
             for (var i = 0; i < currentInput.Length; i++)
             {
                 if (currentInput[i] == '"')
                 {
-                    return currentInput.Substring(0, i);
+                    return true;
                 }
 
-                output += currentInput[i];
+                result += currentInput[i];
             }
 
-            return currentInput;
+            return true;
         }
     }
 }
