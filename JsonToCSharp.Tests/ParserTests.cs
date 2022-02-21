@@ -208,6 +208,16 @@ namespace JsonToCsharp.Tests
             AssertIgnoreSpaces(parser.Output, "public class Root { public List<object> nullers { get; set; }}");
         }
 
+        [Test]
+        public void Should_Parse_Object_And_Array()
+        {
+            var input = "{\"name\":\"Luke\",\"address\":{\"postcode\":\"pe321da\"},\"favColor\":\"blue\",\"favNumbers\":[8,88,888]}";
+            var lexer = new Lexer(input);
+
+            var parser = new Parser(lexer.Tokens);
+            AssertIgnoreSpaces(parser.Output, "public class Address { public string postcode { get; set; } } public class Root { public string name { get; set; } public Address address { get; set; } public string favColor { get; set; } public List<int> favNumbers { get; set; } }");
+        }
+
         private void AssertIgnoreSpaces(string parserOutput, string s)
         {
             RemoveAllWhitespace(parserOutput).Should().Be(RemoveAllWhitespace(s));

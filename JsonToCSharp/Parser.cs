@@ -37,15 +37,10 @@ namespace ConsoleApp1
             }
             else
             {
-
                 tokens = tokens.Skip(1);
-                return;
             }
 
-            if (Output != null)
-            {
-                Output += "}";
-            }
+         
         }
 
         private void ParseArray()
@@ -73,7 +68,6 @@ namespace ConsoleApp1
 
         private void ParseObject()
         {
-            // capitalise first letter of nextClassName
             var output = $"public class {nextClassName ?? "Root"} {{ ";
             
             var firstChar = tokens.First();
@@ -86,8 +80,7 @@ namespace ConsoleApp1
             {
                 var jsonKey = tokens.First();
                 
-
-                this.nextClassName = CapitaliseFirstLetter(jsonKey);
+                nextClassName = CapitaliseFirstLetter(jsonKey);
                 tokens = tokens.Skip(2); // also skip colon
 
                 var type = GetType();
@@ -97,6 +90,7 @@ namespace ConsoleApp1
                 if (tokens.First().Equals('}'))
                 {
                     tokens = tokens.Skip(1);
+                    output += '}';
                     break;
                 }
                 tokens = tokens.Skip(1); // skips ,
@@ -126,23 +120,31 @@ namespace ConsoleApp1
             }
             else if (tokens.First().Equals('['))
             {
-                var secondElement = tokens.ToList().ElementAt(1);
-                if (secondElement is null || secondElement.Equals(']') || secondElement.Equals('{'))
-                {
-                    type = "List<object>";
-                } else if (secondElement is int)
-                {
-                    type = "List<int>";
-                }
-                else if (secondElement is bool)
-                {
-                    type = "List<bool>";
-                }
-                else if (secondElement is string)
-                {
-                    type = "List<string>";
-                }
+                type = GetArrayType(type);
             }
+            return type;
+        }
+
+        private string GetArrayType(string type)
+        {
+            var secondElement = tokens.ToList().ElementAt(1);
+            if (secondElement is null || secondElement.Equals(']') || secondElement.Equals('{'))
+            {
+                type = "List<object>";
+            }
+            else if (secondElement is int)
+            {
+                type = "List<int>";
+            }
+            else if (secondElement is bool)
+            {
+                type = "List<bool>";
+            }
+            else if (secondElement is string)
+            {
+                type = "List<string>";
+            }
+
             return type;
         }
 

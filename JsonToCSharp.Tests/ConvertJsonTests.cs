@@ -1,30 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text.RegularExpressions;
-using Microsoft.VisualBasic.CompilerServices;
-using Newtonsoft.Json;
+﻿using ConsoleApp1;
+using FluentAssertions;
+using NUnit.Framework;
 
-namespace ConsoleApp1
+namespace JsonToCsharp.Tests
 {
-
-    public static class ConvertJson
+    public class ConvertJsonTests
     {
-        
-        // extension method
-        
-        public static string ToCSharp(this string json)
+
+        [Test]
+        public void Should_Convert_Json_To_CSharp()
         {
-            json = json.Trim();
-            json = RemoveAllWhitespace(json);
-
-            var result  = new Lexer(json);
-            var parser = new Parser(result.Tokens);
-
-            return parser.Output;
+            var json = "{\"Person\":{\"Name\":{\"FirstName\":\"Luke\"}}}";
+            var csharp = json.ToCSharp();
+            
+            AssertIgnoreSpaces(csharp, "public class Name { public string FirstName { get; set; }}public class Person { public Name Name { get; set; }}public class Root { public Person Person { get; set; }}");
         }
-
+        
+        private void AssertIgnoreSpaces(string parserOutput, string s)
+        {
+            RemoveAllWhitespace(parserOutput).Should().Be(RemoveAllWhitespace(s));
+        }
+        
         private static string RemoveAllWhitespace(string json)
         {
             var output = "";
@@ -54,6 +50,7 @@ namespace ConsoleApp1
                     output += currentCharacter;
                 }
             }
+
             return output;
         }
     }
